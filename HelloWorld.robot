@@ -18,4 +18,7 @@ Hello world
 TC1
     Hello world
     Open Browser  ${url}  ${Browser}
+    Maximize Browser Window
+    
+    
     
