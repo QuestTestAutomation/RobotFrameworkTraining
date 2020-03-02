@@ -1,5 +1,5 @@
 *** Setting ***
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 Resource    Quote Lines Locators.robot
 Resource    Quote Lines Operations.robot
 Resource    ../Common Elements/Details Page.robot

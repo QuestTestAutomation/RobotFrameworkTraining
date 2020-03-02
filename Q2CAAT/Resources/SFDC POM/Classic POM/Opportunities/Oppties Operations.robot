@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ../SFDC Navigation/Search Locators.robot
-Resource    ../SFDC Navigation/Search and Open SFDC Objects.robot
+Resource    ../../SFDC Navigation/Search Locators.robot
+Resource    ../../SFDC Navigation/Search and Open SFDC Objects.robot
 Resource    Opportunity Details Locators.robot
 Resource    ../Common Elements/Details Page.robot
 

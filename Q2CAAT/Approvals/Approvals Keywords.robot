@@ -2,9 +2,9 @@
 Resource    ../Resources/Commons/Global Setup.robot
 Resource    ../Resources/Commons/SFDC Common Variables.robot
 Resource    ../Resources/SFDC POM/SFDC Navigation/Search and Open SFDC Objects.robot
-Resource    ../Resources/SFDC POM/Quotes/Quote Operations.robot
-Resource    ../Resources/SFDC POM/Quote Lines/Quote Lines Operations.robot
-Resource    ../Resources/SFDC POM/Approvals/Approvals.robot
+Resource    ../Resources/SFDC POM/Classic POM/Quotes/Quote Operations.robot
+Resource    ../Resources/SFDC POM/Classic POM/Quote Lines/Quote Lines Operations.robot
+Resource    ../Resources/SFDC POM/Classic POM/Approvals/Approvals.robot
 Resource    ../Resources/SFDC POM/Login/Login.robot
 Resource    ../Resources/Commons/SFDX.robot
 

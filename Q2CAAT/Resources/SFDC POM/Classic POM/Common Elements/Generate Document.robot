@@ -1,8 +1,8 @@
 *** Settings ***
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 Resource    ../Quotes/Quote Details Locators.robot
 Resource    Details Page.robot
-Resource    ../../Commons/SFDC Common Variables.robot
+Resource    ../../../Commons/SFDC Common Variables.robot
 Library     ImapLibrary    
 
 *** Variables ***

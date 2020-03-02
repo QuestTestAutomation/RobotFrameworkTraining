@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup    AMER NAM DAM Init
-Force Tags    debug 
 
 *** Keywords ***
 AMER NAM DAM Init

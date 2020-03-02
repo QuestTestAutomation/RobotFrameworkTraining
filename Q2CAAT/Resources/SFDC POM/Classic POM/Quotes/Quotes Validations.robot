@@ -1,8 +1,8 @@
 *** Settings ***
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 Resource    Quote Details Locators.robot
 Resource    ../Opportunities/Opportunity Details Locators.robot
-Library     ../../Custom Libs/Plurals.py
+Library     ../../../Custom Libs/Plurals.py
 Library     DateTime    
 
 *** Keywords ***

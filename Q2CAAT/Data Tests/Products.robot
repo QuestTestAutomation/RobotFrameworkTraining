@@ -6,7 +6,7 @@ Suite Setup    Local suite setup
 *** Test Cases ***
 
 All PSO Products which are not sold per hour or per day should be marked as non-dis-countable at product level
-    [Tags]    C740983    debug
+    [Tags]    C740983
     [Documentation]
     ...    https://jira.labs.quest.com/browse/ITQTC-3268
     ...    https://tr.labs.quest.com/testrail/index.php?/cases/view/740983 
@@ -16,7 +16,7 @@ All PSO Products which are not sold per hour or per day should be marked as non-
 
 
 All PSO Products which are sold per hour or per day should be marked as discountable at product level
-    [Tags]    C740982    
+    [Tags]    C740982   
     [Documentation]
     ...    https://jira.labs.quest.com/browse/ITQTC-3268
     ...    https://tr.labs.quest.com/testrail/index.php?/cases/view/740982 

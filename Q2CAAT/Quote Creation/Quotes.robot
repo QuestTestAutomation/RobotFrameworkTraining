@@ -1,15 +1,15 @@
 *** Settings ***
 Resource         ../Resources/Commons/Global Setup.robot
 Resource         ../Resources/SFDC POM/Login/Login.robot
-Resource         ../Resources/SFDC POM/Common Elements/Details Page.robot
+Resource         ../Resources/SFDC POM/Classic POM/Common Elements/Details Page.robot
 Resource         ../Resources/SFDC POM/SFDC Navigation/Search and Open SFDC Objects.robot
-Resource         ../Resources/SFDC POM/Opportunities/Oppties Validations.robot
-Resource         ../Resources/SFDC POM/Quotes/Quote Operations.robot
-Resource         ../Resources/SFDC POM/Quote Lines/Quote Lines Operations.robot
-Resource         ../Resources/SFDC POM/Quote Lines/Quote Lines Validations.robot
-Resource         ../Resources/SFDC POM/Common Elements/Cloud Attachments.robot
+Resource         ../Resources/SFDC POM/Classic POM/Opportunities/Oppties Validations.robot
+Resource         ../Resources/SFDC POM/Classic POM/Quotes/Quote Operations.robot
+Resource         ../Resources/SFDC POM/Classic POM/Quote Lines/Quote Lines Operations.robot
+Resource         ../Resources/SFDC POM/Classic POM/Quote Lines/Quote Lines Validations.robot
+Resource         ../Resources/SFDC POM/Classic POM/Common Elements/Cloud Attachments.robot
 Resource         ../Resources/Commons/SFDC Common Variables.robot
-Resource         ../Resources/SFDC POM/Common Elements/Generate Document.robot
+Resource         ../Resources/SFDC POM/Classic POM/Common Elements/Generate Document.robot
 Suite Setup      Suite Setup
 Test Setup       Login To SFDC sandbox
 Test Teardown    Test Teardown
@@ -79,10 +79,10 @@ Associate Ship to Account and Ship to Contact
     Create Quote for Oppty '${TEST_OPPTY}'
     Go To Edit Quote screen
     Lookup '${CHANGE_TO_TEST_ACCOUNT}' for 'Ship To Account' from section 'Ship To Information'
-    #Lookup '${CHANGE_TO_TEST_CONTACT}' for 'Ship To Contact' from section 'Ship To Information'
+    Lookup '${CHANGE_TO_TEST_CONTACT}' for 'Ship To Contact' from section 'Ship To Information'
     Save Quote
     Quote Property 'Ship To Account' should conatin '${CHANGE_TO_TEST_ACCOUNT}'
-    #Quote Property 'Ship To Contact' should conatin '${CHANGE_TO_TEST_CONTACT}'
+    Quote Property 'Ship To Contact' should conatin '${CHANGE_TO_TEST_CONTACT}'
     
 Associate End User Account and End User Contact
     [Documentation]        *Use Case ID:* Q4.1.45
@@ -96,10 +96,10 @@ Associate End User Account and End User Contact
     Create Quote for Oppty '${TEST_OPPTY}'
     Go To Edit Quote screen
     Lookup '${CHANGE_TO_TEST_ACCOUNT}' for 'End User Account' from section 'End User Information'
-    #Lookup '${CHANGE_TO_TEST_CONTACT}' for 'End User Contact' from section 'End User Information'
+    Lookup '${CHANGE_TO_TEST_CONTACT}' for 'End User Contact' from section 'End User Information'
     Save Quote
     Quote Property 'End User Account' should conatin '${CHANGE_TO_TEST_ACCOUNT}'
-    #Quote Property 'End User Contact' should conatin '${CHANGE_TO_TEST_CONTACT}'
+    Quote Property 'End User Contact' should conatin '${CHANGE_TO_TEST_CONTACT}'
     
 Associate Bill To Account and Bill To Contact
     [Documentation]        *Use Case ID:* Q4.1.46
@@ -113,10 +113,10 @@ Associate Bill To Account and Bill To Contact
     Create Quote for Oppty '${TEST_OPPTY}'
     Go To Edit Quote screen
     Lookup '${CHANGE_TO_TEST_ACCOUNT}' for 'Bill To Account' from section 'Bill To'
-    #Lookup '${CHANGE_TO_TEST_CONTACT}' for 'Bill To Contact' from section 'Bill To'
+    Lookup '${CHANGE_TO_TEST_CONTACT}' for 'Bill To Contact' from section 'Bill To'
     Save Quote
     Quote Property 'Bill To Account' should conatin '${CHANGE_TO_TEST_ACCOUNT}'
-    #Quote Property 'Bill To Contact' should conatin '${CHANGE_TO_TEST_CONTACT}'
+    Quote Property 'Bill To Contact' should conatin '${CHANGE_TO_TEST_CONTACT}'
     
 Quote Totals
     [Documentation]        *Use Case ID:* Q4.1.34
@@ -196,7 +196,7 @@ Verify Sales rep is able to edit Quantity from configurator screen on quote line
     Add product to Quote with Quatntity    AAA-WGA-PB    123
     Quote Total Should Be 'USD 1,230.00'
     Save Products
-    Quote Line for 'AAA-WGA-PB' Should Contian '12.0' Quantity
+    Quote Line for 'AAA-WGA-PB' Should Contian '123.00' Quantity
     Quote Line for 'AAA-WGA-PB' Should Contian 'USD 1,230.00' Net Total
 
 Subscription section Start Date and End Date on Quote Line

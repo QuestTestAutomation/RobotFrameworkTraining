@@ -1,10 +1,10 @@
 *** Settings ***
-Resource    ../../Commons/Global Setup.robot
-Resource    ../Login/Login Page Locators.robot
-Resource    ../SFDC Navigation/Search Locators.robot
+Resource    ../../../Commons/Global Setup.robot
+Resource    ../../Login/Login Page Locators.robot
+Resource    ../../SFDC Navigation/Search Locators.robot
 Resource    ../Quotes/Quote Details Locators.robot
 Resource    Opportunity Details Locators.robot
-Library     ../../Custom Libs/Plurals.py
+Library     ../../../Custom Libs/Plurals.py
 
 *** Keywords ***
 Current Opportunity is '${oppty_name}'

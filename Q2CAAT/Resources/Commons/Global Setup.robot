@@ -7,25 +7,28 @@ Resource    SFDX.robot
 Resource    SFDC Common Variables.robot
 
 *** Variables ***
-&{SF_USER}            email=gborodin@quest.com.devfull    display_name=Gennady Borodin    password=`q1w2e3r4t5
-#&{SF_USER}            email=gborodin@quest.com.sfdctst    display_name=Gennady Borodin    password=`q1w2e3r4
-${BROWSER}            gc
-${BASE_URL}           https://questsoftware--devfull.cs44.my.salesforce.com
-#${BASE_URL}           https://questsoftware--sfdctst.cs23.my.salesforce.com
-${ENVIRONMENT}        Local    #Values: Remote for SauseLabs, Local for local webdriver
-${MAX_WAIT_TIME}      120
-${VERIFICATION_CODE}  61000
-${TEST_RUN_NAME}      Test Run - 12
-${CI_ENABLED}         No
-${TEST_RAIL_PROJECT}  Quote to Cash
-${TEST_RAIL_PLAN}     Continuous Testing
-${VISUAL_VERBOSE}     No
+#&{SF_USER}               email=gborodin@quest.com.devfull    display_name=Gennady Borodin    password=`q1w2e3r4
+&{SF_USER}                email=tuser@quest.com.devfull    display_name=Test User    password=`q1w2e3r4
+#&{SF_USER}               email=gborodin@quest.com.sfdctst    display_name=Gennady Borodin    password=`q1w2e3r4t5
+${BROWSER}                gc
+${BASE_URL}               https://questsoftware--devfull.cs44.my.salesforce.com
+${LIGHTNING_BASE_URL}     https://questsoftware--devfull.lightning.force.com/lightning
+#${BASE_URL}              https://questsoftware--sfdctst.cs23.my.salesforce.com
+${ENVIRONMENT}            Local    #Values: Remote for SauseLabs, Local for local webdriver
+${MAX_WAIT_TIME}          120
+${VERIFICATION_CODE}      61000
+${TEST_RUN_NAME}          Test Run - 12
+${CI_ENABLED}             No
+${TEST_RAIL_PROJECT}      Quote to Cash
+${TEST_RAIL_PLAN}         Continuous Testing
+${VISUAL_VERBOSE}         No
+${CONFIG}                 ${EMPTY}
 
 
 
 *** Keywords ***
 Suite Setup
-    Run Keyword If    '${CI_ENABLED}'=='Yes'    Import TRailLibrary
+    Run Keyword If    '${CI_ENABLED}'=='Yes'    Import TRailLibrary    config=${CONFIG}
     log     ${CURDIR}
     ${path}    Split Path    ${CURDIR}
     ${path}    Split Path    ${path[0]}
@@ -41,7 +44,11 @@ Wait for Page Elements Load
     sleep    1
 
 Import TRailLibrary
-    Import Library    TRailLibrary    url=https://tr.labs.quest.com/testrail    user=gennady.borodin@quest.com     api_key=GTRera/oi1ZBV8kUZbd5-6Fx1CaEIdQVeDAEyblor    project=${TEST_RAIL_PROJECT}    plan=${TEST_RAIL_PLAN}    run_name=${TEST_RUN_NAME}
+    [Arguments]    ${config}=${EMPTY}
+    Run Keyword If    '${config}'=='${EMPTY}'
+    ...    Import Library    TRailLibrary    url=https://tr.labs.quest.com/testrail    user=gennady.borodin@quest.com     api_key=GTRera/oi1ZBV8kUZbd5-6Fx1CaEIdQVeDAEyblor    project=${TEST_RAIL_PROJECT}    plan=${TEST_RAIL_PLAN}    run_name=${TEST_RUN_NAME}
+    Run Keyword If    '${config}' is not '${EMPTY}'
+    ...    Import Library    TRailLibrary    url=https://tr.labs.quest.com/testrail    user=gennady.borodin@quest.com     api_key=GTRera/oi1ZBV8kUZbd5-6Fx1CaEIdQVeDAEyblor    project=${TEST_RAIL_PROJECT}    plan=${TEST_RAIL_PLAN}    run_name=${TEST_RUN_NAME}    config={'Profile':'${config}'}       
 
 Scroll To Element JS
     [Arguments]    ${element_xpath_locator}

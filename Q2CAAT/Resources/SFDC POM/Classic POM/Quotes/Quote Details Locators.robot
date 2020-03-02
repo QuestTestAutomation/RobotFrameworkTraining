@@ -71,12 +71,12 @@ Locator for Quote Line item ${product code} Quantity
    
 Locator for Quote Line item ${product code} Net Total 
    ${loc}=    Table locator for 'Quote Lines'
-   ${loc}=    Catenate    SEPARATOR=   ${loc}    //tr/td[.="    ${product code}    "]/following-sibling::td[5]
+   ${loc}=    Catenate    SEPARATOR=   ${loc}    //tr/td[.="    ${product code}    "]/following-sibling::td[6]
    [Return]    ${loc}
 
 Locator for Quote Line item ${product code} Total Discount
    ${loc}=    Table locator for 'Quote Lines'
-   ${loc}=    Catenate    SEPARATOR=   ${loc}    //tr/td[.="    ${product code}    "]/following-sibling::td[4]
+   ${loc}=    Catenate    SEPARATOR=   ${loc}    //tr/td[.="    ${product code}    "]/following-sibling::td[5]
    [Return]    ${loc} 
 
 Locator for Del Quote Line item ${product code}

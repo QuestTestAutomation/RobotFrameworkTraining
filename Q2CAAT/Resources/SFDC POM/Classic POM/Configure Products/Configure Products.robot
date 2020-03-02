@@ -3,7 +3,7 @@ Library    SeleniumLibrary
 Library    Collections
 Library    String
 Resource    ../Quotes/Quote Details Locators.robot
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 
 *** Variables ***
 ${add_products_button}                   //paper-button[@id="mainButton"][text()="Add Products"]

@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 Resource    ../Opportunities/Oppties Validations.robot
 Resource    Quotes Validations.robot
 Resource    ../Opportunities/Oppties Validations.robot

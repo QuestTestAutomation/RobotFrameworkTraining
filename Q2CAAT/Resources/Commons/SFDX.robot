@@ -85,7 +85,7 @@ Get Product Business Unit
     ${val}=     Set Variable If    "${data set}"=="[]"    ${EMPTY}    @{data set}[0]
     [Return]    ${val}
  
- Get Oppty ID by Name
+Get Oppty ID by Name
     [Arguments]    ${name}
     ${query}    Catenate    ${sfdx root}    force:data:soql:query -q
     ${query}    Catenate    ${query}    "SELECT Id FROM Opportunity WHERE Name =     

@@ -1,6 +1,5 @@
 *** Settings ***
-Suite Setup    APJ DAM Data Init
-Force Tags    debug    
+Suite Setup    APJ DAM Data Init    
 
 
 *** Keywords ***

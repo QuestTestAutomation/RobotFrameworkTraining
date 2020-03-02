@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 Resource    ../Quotes/Quote Details Locators.robot
 
 *** Variables ***

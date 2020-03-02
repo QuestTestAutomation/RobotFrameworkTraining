@@ -1,5 +1,5 @@
 *** Setting ***
-Resource    ../../Commons/Global Setup.robot
+Resource    ../../../Commons/Global Setup.robot
 
 
 *** Variables ***
