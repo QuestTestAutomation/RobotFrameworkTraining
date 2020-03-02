@@ -1,0 +1,12 @@
+--variable TEST_OPPTY:Gennady Borodin - Gennady+Borodin+Manual Commercial Account Creation - NAM - License - Oppty-3497115
+--variable TEST_OPPTY_CHANNEL:Referral Gennady+Borodin+Manual Commercial Account Creation - NAM - License - Oppty-3497695
+--variable TEST_ACCOUNT:Gennady+Borodin+Manual Commercial Account Creation - NAM
+--variable TEST_CONTACT:Test ManuallTest
+--variable CHANGE_TO_TEST_ACCOUNT:Change to This One Account Creation - NAM
+--variable CHANGE_TO_TEST_CONTACT:est ChangeTo
+--variable LONG PO NUMBER:11111222223333344444555556666677777888889999900000  
+--variable NEW_QUOTE_NUMBER:${None}
+--variable NEW_QUOTE_ID:${None}
+--variable 10 mail boxes:m1@d.com,m2@d.com,m3@d.com,m4@d.com,m5@d.com,m6@d.com,m7@d.com,m8@d.com,m9@d.com,m10@d.com
+
+ 
