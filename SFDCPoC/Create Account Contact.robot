@@ -19,12 +19,16 @@ Suite Setup       Lightning Suite Setup
 ${AccountName}                    "Test Automation Account"
 ${RelatedTab}         //a[contains(@class, "entityNameTitle")] 
 ${new object panel header}        //div[@data-aura-class="forceDetailPanelDesktop"]//h3[.="Account Information"]
+${relatedcheckloc}   //span[contains(text(),'QPC Existing Deal Reg')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::*[last()-1]
+${relatedcheckloc1}   //span[contains(text(),'QPC Existing Deal Reg')]/parent::div//following-sibling::div//slot[@name='outputField']//span[contains(text(),'::After')]
+
 
 *** Test Cases ***
 ITQTC-XXXX - Create An Account
     #   Create Default Account  ${AccountName}  False
-    Create Related Contact for Account  0017A00000UZg9oQAD  Kan_FirstName  Kan_LastName  9999999999  kan@sharklasers.com  True
-
+    #Create Related Contact for Account  0017A00000UZg9oQAD  Kan_FirstName  Kan_LastName  9999999999  kan@sharklasers.com  True
+    #Create Contact Opportunity  0037A00000Q0bhUQAR
+    Navigate to Opportunity  0067A000003DCRDQA4
 
 *** Keywords ***
 
@@ -141,4 +145,84 @@ Create New Record Dialog
     ${create new object panel header}  Loc for New Object Page   ${object}
     Wait Until Page Contains Element    ${create new object panel header}
     
+Get TextBox Value 
+    [Documentation]  This Keyword retrives the text box value Displayed in lightning .
+    ...    
+    [Arguments]  ${TextBoxLabel}
+    ${TextBoxLabel}  CATENATE  xpath=//span[contains(text(),'${TextBoxLabel}')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::*[last()]
+    ${TextBoxValue}  GET TEXT  ${TextBoxLabel}
+    [Return]  ${TextBoxValue}
     
+Get CheckBox Value 
+    [Documentation]  This Keyword retrives the text box value Displayed in lightning .
+    ...    
+    [Arguments]  ${TextBoxLabel}
+    ${TextBoxLabel}  CATENATE  xpath=//span[contains(text(),'${TextBoxLabel}')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::*[last()-1]
+    ${TextBoxValue}  GET TEXT  ${TextBoxLabel}
+    [Return]  ${TextBoxValue}
+    
+Get TextBox with hyperlink Value 
+    [Documentation]  This Keyword retrives the text box displayed in lightning UI which is a hyperlinl.
+    ...    
+    [Arguments]  ${TextBoxLabel}
+    ${TextBoxLabel}  CATENATE  xpath=//span[contains(text(),'${TextBoxLabel}')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::a[last()]
+    ${TextBoxValue}  GET TEXT  ${TextBoxLabel}
+    [Return]  ${TextBoxValue}
+
+
+Create Contact Opportunity
+    [Arguments]  ${ContactObjectId}
+    Open SFDC object by ID                      ${ContactObjectId}
+    Wait for New Object of type        Contact
+    Close Alert Message                View Duplicates
+    Expand Action Menu and Click Item  New Opportunity
+    Wait for New Object of type        Opportunity
+    Get Value from  Opportunity Name
+    Get Text  xpath=//div[contains(@class, "windowViewMode-normal")]//div[@force-recordlayoutitem_recordlayoutitem][.="Opportunity Name"]/..//slot[@name="outputField"]//[last()]
+    #Navigate to Object Related Tab  Opportunities
+        
+Navigate to Opportunity
+    [Arguments]  ${OpportunityId}
+    Open SFDC Object by ID  0067A000003DCRDQA4
+    Wait for New Object of type        Opportunity
+   # Get Text  xpath=//div[contains(@class, "windowViewMode-normal")]//div[@force-recordlayoutitem_recordlayoutitem][.="Opportunity Name"]/..//slot[@name="outputField"]//descendant-or-self::*[last()]   #..//slot[@name="outputField"]//[last()]
+   # ${OpportunityName}=  Get Text  xpath=//div[contains(@class, "windowViewMode-normal")]//div[@force-recordlayoutitem_recordlayoutitem][.="Opportunity Name"]/..//slot[@name="outputField"]//descendant-or-self::*[last()]   #..//slot[@name="outputField"]//[last()]
+   # Log  ${OpportunityName}
+   Wait Until Page Contains Element  xpath=//span[contains(text(),'Opportunity Name')]/parent::div//following-sibling::div//slot[@name='outputField']   #..//slot[@name="outputField"]//[last()]
+    ${OpportunityOwner}  Get Text  xpath=//span[contains(text(),'Opportunity Name')]/parent::div//following-sibling::div//slot[@name='outputField']//Lightning-formatted-text   #..//slot[@name="outputField"]//[last()]
+    Log  ${OpportunityOwner}   
+     ${OpportunityOwner}  Get Text  xpath=//span[contains(text(),'Close Date')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::Lightning-formatted-text[last()]   #..//slot[@name="outputField"]//[last()]
+    Log  ${OpportunityOwner}
+     ${OpportunityOwner}  Get Text  xpath=//span[contains(text(),'Opportunity Owner')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::a[last()]   #..//slot[@name="outputField"]//[last()]
+    Log  ${OpportunityOwner}  
+    ${OpportunityOwner}  Get Value from  Opportunity Name
+    Log  ${OpportunityOwner}
+     ${OpportunityOwner}  Get Value from  Opportunity Owner
+    Log  ${OpportunityOwner}
+       ${OpportunityOwner}  Get Text  xpath=//span[contains(text(),'Account Name')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::a[last()]   #..//slot[@name="outputField"]//[last()]
+    Log  ${OpportunityOwner} 
+     ${Probability}  Get TextBox Value  Stage
+    Log  ${Probability}
+     ${OpportunityOwner}  Get Value from  Probability (%)
+    Log  ${OpportunityOwner}
+    ${OpportunityOwner}  Get Text  xpath=//span[contains(text(),'Probability (%)')]/parent::div//following-sibling::div//slot[@name='outputField']//descendant::*[last()]   #..//slot[@name="outputField"]//[last()]
+    Log  ${OpportunityOwner}
+    ${Probability}  Get TextBox Value  Probability (%)
+    Log  ${Probability}
+    ${Probability}  Get TextBox Value  Opportunity Owner
+    Log  ${Probability}
+    ${Probability}  Get TextBox with hyperlink Value   Opportunity Owner
+    Log  ${Probability}
+     ${Probability}  Get CheckBox Value  QPC Existing Deal Reg
+    Log  ${Probability}
+      ${Probability}  Get CheckBox Value  Territory Update Flag
+    Log  ${Probability}
+    ${Probability}  Get TextBox Value  Opportunity Currency
+    Log  ${Probability}
+    ${webdriver}  get webdriver instance
+    Get Element Text   ${webdriver}  ${relatedcheckloc}
+    ${attributevalue}  Get Element Attribute custom  ${webdriver}  ${relatedcheckloc}  innerText
+    Log   ${attributevalue}
+     Get Element Text   ${webdriver}  ${relatedcheckloc1}
+   
+
