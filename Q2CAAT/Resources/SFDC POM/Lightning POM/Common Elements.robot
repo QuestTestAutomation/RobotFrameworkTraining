@@ -1,20 +1,23 @@
 *** Settings ***
 Resource    ../../Commons/Global Setup.robot
 Resource    POM Workarounds.robot
+Resource    ../../../Lightning Tests/Lightning Suite Commons.robot
 Library     SeleniumLibrary
 Library     Collections        
 
 
 *** Variables ***
-${new button}                     //li[contains(@class, "slds-button")]//a[@title="New"]
+${new button}                     //div[contains(@class, "windowViewMode-normal")]//li[contains(@class, "slds-button")]//a[@title="New"]
 ${record type next button}        //div[@class="inlineFooter"]//button[.="Next"]
 ${close modal dialog button}      //button[@title="Close this window"]
 ${record type selector}           //div[@class="changeRecordTypeRow"]
 ${new object panel header}        //div[contains(@class, "oneRecordActionWrapper")]//h2
 ${object actions drop down}       //div[contains(@class, 'windowViewMode-normal')]//div[contains(@class, "primaryFieldRow")]//div[contains(@class, 'actionsContainer')]//*[@data-key="down"]/../..    #/ancestor-or-self::a    #//div[contains(@class, 'windowViewMode-normal')]//div[contains(@class, 'actionsContainer')]//li[contains(@class, 'ActionsDropDown')]
-${save button}                    //div[@class="inlineFooter"]//button[.="Save"]
-${modal dialog}                   //div[contains(@class, "oneRecordActionWrapper isModal") and contains(@class, "active") ] 
+${save button}                    //div[@class="inlineFooter"  or contains(@class, "modal-footer")]//button[.="Save"]
+${modal dialog}                   (//div[contains(@class, "oneRecordActionWrapper isModal") and contains(@class, "active") ] | //div[contains(@class, "uiModal") and @aria-hidden="false"])
 ${entity type name}               //div[contains(@class, "windowViewMode-normal oneContent active lafPageHost")]//div[contains(@class, "entityNameTitle")]
+${quick filter button}            //div[contains(@class, "windowViewMode-normal")]//button[@title="Show quick filters"]
+${apply filter button}            //form[contains(normalize-space(.//h2//text()), "Quick Filters")]//button[@title="Apply"]
 
 
 *** Keywords ***
@@ -25,7 +28,8 @@ Wait and Click Element
 
 Loc for Textarea Field
     [Arguments]    ${field name}
-    ${loc}    Catenate    //div[contains(@class, "modal-container")]//div[@class="inputHeader"]//*[.="${field name}"]/../../..//div[@class="bBody"]//textarea
+    #${loc}    Catenate    //div[contains(@class, "modal-container")]//div[@class="inputHeader"]//*[.="${field name}"]/../../..//div[@class="bBody"]//textarea
+    ${loc}    Catenate    (//div[@class="bBody"][.//div[@class="inputHeader"]//*[.="${field name}"]] |((//div[@force-recordlayoutitem_recordlayoutitem] | //div[@role="listitem"] | //lightning-textarea)[.//label[.="${field name}"]]))//textarea
     [Return]    ${loc} 
 
 Loc for New Object Dialog Header
@@ -35,7 +39,7 @@ Loc for New Object Dialog Header
 
 Loc for Tex Box Item
     [Arguments]    ${label}
-    ${loc}    Catenate   SEPARATOR=    //div[@data-aura-class="forceDetailPanelDesktop"]//div[@role="listitem"]//*[.="${label}"]/../../input
+    ${loc}    Catenate   SEPARATOR=     (//div[@role="listitem"]//*[text()="${label}"]//ancestor-or-self::div[contains(@class,"uiInput")][1] | (//div[contains(@class, "flowruntime-input")] | //lightning-lookup-desktop | //lightning-input)[.//*[text()="${label}"]])//input   #//div[@role="listitem"]//*[.="${label}"]//ancestor::div[1]//input    #//div[@data-aura-class="forceDetailPanelDesktop"]//div[@role="listitem"]//*[.="${label}"]/../../input
     [Return]    ${loc}
 
 Loc for Look Up Item
@@ -48,23 +52,40 @@ Loc for Record Field Value
     [Arguments]    ${field name}   
     ${loc}    Catenate   SEPARATOR=    //force-record-layout-item[@role="listitem"]//div[contains(@class, "slds-form-element__label")]//*[.="${field name}"]//ancestor-or-self::*[@role="listitem"]//slot[@slot="outputField"]
     [Return]    ${loc}
+
+Loc for Record Tab
+    [Arguments]    ${tab name}
+    ${loc}    Catenate   SEPARATOR=    //ul[@role="tablist"]//li[@title="${tab name}"]
+    [Return]    ${loc}
     
-Expand Action Menu and Click Item 
+Expand Action Menu and Click Item
     [Arguments]    ${action}
     Wait Until Page Contains Element         ${object actions drop down}
     ${current location}     Get Location
     Wait Until Element Is Visible            ${object actions drop down}    
     sleep    2 
     Click Element                            ${object actions drop down}    #action_chain=True
-    ${loc}    Catenate                       //a//*[.="${action}"]    #//div[contains(@class, "actionMenu")]//li//a[@title="${action}"]
+    ${loc}    Catenate                       //a//*[.="${action}"]//ancestor-or-self::a    #//div[contains(@class, "actionMenu")]//li//a[*="${action}"]     #//a//*[.="${action}"]//ancestor-or-self::a
     sleep    1
     Page Should Contain Element              ${loc}        message=No "${action}" item has been found in the action menu. Object URL: ${current location}   
     Scroll To Element JS                     ${loc}
-    Async JS Click                           ${loc}                 
+    Async JS Click                           ${loc} 
 
-Click Action Button    
+Layout Should not Contain Action Menu Item
+    [Arguments]    ${action}
+    Wait Until Page Contains Element         ${object actions drop down}
+    ${current location}     Get Location
+    Wait Until Element Is Visible            ${object actions drop down} 
+    sleep    2 
+    Click Element                            ${object actions drop down}    #action_chain=True
+    ${loc}    Catenate                       //div[@role="menu" and @class="branding-actions actionMenu"]//li[.//a[@title="${action}"]]    #//div[contains(@class, "actionMenu")]//li//a[@title="${action}"]
+    sleep    1
+    Page Should Not Contain Element          ${loc}        message=Layout contains "${action}" Action Menu Item, but should not. Object URL: ${current location}   
+
+Click Action Button
     [Arguments]    ${button}
-    ${loc}    Catenate                  //div[contains(@class, "windowViewMode-normal")]//*[contains(@class, "slds-button")]//*[.="${button}"]//descendant-or-self::*[@role="button"]    #//*[contains(@class, "slds-button")]//*[.="${button}"]    
+    ${loc}    Catenate                  //div[contains(@class, "windowViewMode-normal")]//*[contains(@class, "slds-button")]//*[.="${button}"]//descendant-or-self::*[@role="button"]    #//*[contains(@class, "slds-button")]//*[.="${button}"]
+    Scroll Element Into View            ${loc}    
     Wait Until Page Contains Element    ${loc}  
     Click Element                       ${loc}
     
@@ -89,10 +110,13 @@ Go To Create New Record Dialog
     Wait Until Element Contains    ${new object panel header}    ${object}
  
 Select Record Type
-    [Arguments]    ${record type}
+    [Arguments]    ${record type}    ${skip for profiles}=${EMPTY}
+    @{profiles}    Split String    ${skip for profiles}    ,${SPACE}    
+    Return From Keyword If    '${PROFILE}' in ${profiles}    
     ${loc}    Catenate    SEPARATOR=    ${record type selector}   //*[.="${record type}"]//ancestor-or-self::label//input
+    Wait Until Page Contains Element    ${loc}    
     Async JS Click    ${loc}
-    Capture Page Screenshot      
+    Capture Page Screenshot
     Click Element    ${record type next button}
     
 Insert value in Text Box
@@ -102,7 +126,7 @@ Insert value in Text Box
     Sleep    1   
     Input Text    ${loc}    ${value}    
 
-Input text to Textarea Field
+Insert text to Textarea Field
     [Arguments]    ${field name}    ${text}
     ${loc}    Loc for Textarea Field    ${field name}
     Input Text    ${loc}    ${text}    
@@ -126,7 +150,7 @@ GoTo Object Tab
     sleep    1
     Async JS Click     ${loc}
     Wait Until Page Contains Element    //div[contains(@class, "windowViewMode-normal") and contains(@class, "active")]//nav[@role="navigation"][@aria-label="Breadcrumbs"]//*[.="${tab name}"]
-    Reload Page     
+    Reload Page
     sleep    1    
 
 Wait for New Browser Window with URL
@@ -196,7 +220,7 @@ Wait Until Field Contians Values
     [Arguments]    ${field name}    @{expexcted values}
     Wait Until Keyword Succeeds    30x    2 sec    Record Field Should Contain Values    ${field name}    @{expexcted values}    
 
-Click New Button      
+Click New Button
     Wait Until Page Contains Element    ${new button}    
     Click Element                       ${new button}
 
@@ -215,40 +239,124 @@ Item Is Checked
     ${result}=    Execute Javascript    return window.document.evaluate("${selector}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.checked
     Should Be Equal As Strings 	${field value}	${result} 	ignore_case=True    msg=Expected '${field name}' is set to '${field value}'. Actual value '${result}'
 
+Field Should Be Required
+    [Arguments]    ${field name}    ${field value}
+    ${selector}    Catenate    SEPARATOR=    (//div[@role='listitem']//*[text()='${field name}']//ancestor-or-self::div[contains(@class,'uiInput')][1] | (//div[contains(@class, 'flowruntime-input')] | //lightning-lookup-desktop | //lightning-input)[.//*[text()='${field name}']])//input
+    ${count element}    Get Element Count    ${selector}
+    Run Keyword IF    ${count element}==0    FAIL    Page does not contain element "${field name}"
+    ${result}=    Execute Javascript    return window.document.evaluate("${selector}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.required
+    Should Be Equal As Strings 	${field value}	${result} 	ignore_case=True    msg=Expected required value of '${field name}' is '${field value}'. Actual value '${result}'
+
 Switch to Tab
     [Arguments]    ${tab name}    ${location column}=main    #possible values of ${location column}: main|left|right
     ${location column}    Convert To Lowercase    ${location column}
-    ${selector}    Catenate    SEPARATOR=    //div[contains(@class, 'windowViewMode-normal')]//flexipage-record-home-scrollable-column[contains(@class, '${location column}-col')]//lightning-tab-bar//a[normalize-space(text())='${tab name}']
+    #${selector}    Catenate    SEPARATOR=    //div[contains(@class, 'windowViewMode-normal')]//flexipage-record-home-scrollable-column[contains(@class, '${location column}-col')]//lightning-tab-bar//a[normalize-space(text())='${tab name}']
+    ${selector}    Catenate    SEPARATOR=    (//flexipage-record-home-scrollable-column[contains(@class, "col ${location column}-col")] | //slot[@slot="${location column}"] | //div[contains(@class,  "region-sidebar-${location column}")]//slot[@slot="sidebar"])[.//ancestor::div[contains(@class, "windowViewMode-normal")]]//lightning-tab-bar//a[normalize-space(text())="${tab name}"]
     ${count element}    Get Element Count    ${selector}
     Run Keyword IF    ${count element}==0    FAIL    Page does not contain tab "${tab name}"
     Scroll Element Into View    ${selector}
     Click Element    ${selector}
-    Wait Until Page Does Not Contain Element    //div[@class="loadingSpinner slds-show"]
+    Wait Until Page Does Not Contain Element    //div[contains(@class,"loadingSpinner") and contains(@class,"slds-show")]
     Wait Until Element Is Enabled               //force-quick-link-container//ul[@force-quicklinkcontainer_quicklinkcontainer]/li
+
+Switch to Record Info Tab
+    [Arguments]    ${tab name}    ${slot}=main
+    ${loc}    Catenate    SEPARATOR=    //div[contains(@class, "oneContent active")]//slot[@slot="${slot}"]//ul[@role="tablist"]//li[@title="${tab name}"]/a
+    Wait Until Page Contains Element    ${loc}
+    #${count}    Get Element Count    ${loc}
+    Async JS Click    ${loc}
+    #Click Element   ${loc}
+    Wait Until Page Does Not Contain Element    //div[contains(@class,"loadingSpinner") and contains(@class,"slds-show")]
     
 Open Quick Link
     [Arguments]    ${link name}
-    ${selector Show All}    Catenate    SEPARATOR=    //force-quick-link-container//a[starts-with(normalize-space(text()), 'Show All')]
+    ${selector Show All}    Catenate    SEPARATOR=    //div[contains(@class, "windowViewMode-normal")]//div[contains(@class,"forceRelatedListQuickLinksContainer")]//a[starts-with(normalize-space(text()), "Show All")]
     ${count element}    Get Element Count    ${selector Show All}
     Run Keyword IF    ${count element}!=0    Click Element    ${selector Show All}
-    Wait Until Page Does Not Contain Element    //div[@class="loadingSpinner slds-show"]
-    ${selector}    Catenate    SEPARATOR=    //force-quick-link-container//a[starts-with(normalize-space(.//text()), '${link name}')]
+    Wait Until Page Does Not Contain Element    //div[contains(@class,"loadingSpinner") and contains(@class,"slds-show")]
+    ${selector}    Catenate    SEPARATOR=    //div[contains(@class, "windowViewMode-normal")]//div[contains(@class,"forceRelatedListQuickLinksContainer")]//a[starts-with(normalize-space(.//text()), '${link name}')]
     Scroll Element Into View    ${selector}
     Click Element    ${selector}
     Wait Until Element Is Enabled                //div[contains(@class, 'windowViewMode-normal')]//div[@class='forceRelatedListDesktop' and .//h1[@title='${link name}']]//table//tbody
-    Wait Until Page Does Not Contain Element     //div[@class="loadingSpinner slds-show"]
+    Wait Until Page Does Not Contain Element     //div[contains(@class,"loadingSpinner") and contains(@class,"slds-show")]
 
-Expand Action Menu of Related List and Click Item 
+Expand Action Menu of Related List and Click Item
     [Arguments]    ${related list}    ${action}
-    ${selector}    Catenate    SEPARATOR=        //div[contains(@class, 'windowViewMode-normal')]//article[@data-aura-class='forceRelatedListCardDesktop'][.//header//a//*[@title='${related list}']]//a[.//*[@data-key='down']]
-    Wait Until Page Contains Element        ${selector}         
-    ${current location}                     Get Location
-    #Wait Until Element Is Visible           ${selector}
-    Scroll Element Into View                ${selector}
-    sleep    2 
-    Click Element                           ${selector}    #action_chain=True
-    ${loc}    Catenate                       //a//*[.="${action}"]    #//div[contains(@class, "actionMenu")]//li//a[@title="${action}"]
+    ${selector}    Catenate    SEPARATOR=    //div[contains(@class, "windowViewMode-normal")]//article[@data-aura-class="forceRelatedListCardDesktop"][.//header//a//*[@title="${related list}"]]
+    Wait Until Page Contains Element         ${selector}         
+    ${current location}                      Get Location
+    Wait Until Element Is Visible            ${selector}
+    Scroll To Element JS                     ${selector}
+    ${selector}    Catenate    SEPARATOR=    ${selector}    //div[@data-aura-class="forceDeferredDropDownAction"]//a
+    Wait Until Page Contains Element         ${selector}
+    Async JS Click                           ${selector}
+    ${loc}    Catenate                       //div[@role="menu"]//li//a[@title="${action}"]   #//a//*[.="${action}"]    #//div[contains(@class, "actionMenu")]//li//a[@title="${action}"]
     sleep    1
     Page Should Contain Element              ${loc}        message=No "${action}" item has been found in the action menu. Object URL: ${current location}   
-    Scroll To Element JS                     ${loc}
-    Async JS Click                           ${loc}                 
+    Set Focus To Element                     ${loc}
+    Click Link                            ${loc}
+
+Page Should Contain Related List
+    [Arguments]    ${related list}
+    ${selector}    Catenate    SEPARATOR=    //div[contains(@class, "windowViewMode-normal")]//article[@data-aura-class="forceRelatedListCardDesktop"][.//header//a//*[@title="${related list}"]]
+    Wait Until Page Contains Element         ${selector}         
+    ${current location}                      Get Location
+    Wait Until Element Is Visible            ${selector}
+    Scroll To Element JS                     ${selector}
+    Capture Page Screenshot
+    Page Should Contain Element              ${selector}        message="${related list}" Related List not found. Object URL: ${current location}   
+
+Open Related List
+    [Arguments]    ${related list}
+    ${selector}    Catenate    SEPARATOR=    //div[contains(@class, "windowViewMode-normal")]//article[@data-aura-class="forceRelatedListCardDesktop"]//header//a[.//*[@title="${related list}"]]
+    Wait Until Page Contains Element             ${selector}
+    Wait Until Element Is Visible                ${selector}
+    Wait Until Element Is Enabled                ${selector}
+    sleep    2
+    Scroll Element Into View                     ${selector}
+    Async JS Click                               ${selector}
+    #Click Element                                ${selector}
+    Wait Until Element Is Enabled                //div[contains(@class, 'windowViewMode-normal')]//div[@class='forceRelatedListDesktop' and .//h1[@title='${related list}']]//table//tbody
+    Wait Until Page Does Not Contain Element     //div[contains(@class,"loadingSpinner") and contains(@class,"slds-show")]
+
+Click Quick Filter Button
+    Wait Until Page Contains Element            ${quick filter button}
+    Wait Until Element Is Enabled               ${quick filter button}
+    Click Element	                            ${quick filter button}
+    Wait Until Page Contains Element            //form[contains(normalize-space(.//h2//text()), "Quick Filters")]
+
+Click Apply Filter Button
+    Wait Until Page Contains Element            ${apply filter button}
+    Wait Until Element Is Enabled               ${apply filter button}
+    Click Element	                            ${apply filter button}
+    Wait Until Page Does Not Contain Element    //div[contains(@class,"loadingSpinner") and contains(@class,"slds-show")]
+
+Filter:Insert value in Text Box
+    [Arguments]    ${label}    ${value}
+    ${selector}    Catenate    SEPARATOR=    //form[contains(normalize-space(.//h2//text()), "Quick Filters")]//lightning-input[contains(normalize-space(.//label/text()), "${label}")]//input
+    Wait Until Page Contains Element    ${selector} 
+    Input Text    ${selector}    ${value}
+    
+Select value in Combo Box
+    [Arguments]    ${label}    ${value}    ${id value}=${EMPTY}
+    ${tail}    Set Variable If    '${id value}'=='${EMPTY}'    [1]    [@data-value="${id value}"]
+    ${selector}    Loc for Tex Box Item      ${label}
+    Wait Until Page Contains Element    ${selector} 
+    Input Text                     ${selector}    ${value}  
+    Click Element                  ${selector}
+    Sleep    1
+    ${loc}    Catenate             //lightning-base-combobox-item[.//lightning-base-combobox-formatted-text[@title="${value}"]]${tail}
+    Scroll To Element JS           ${loc}
+    Click Element                  ${loc} 
+
+Page Should Contain Field
+    [Arguments]    ${field name}    ${expected value}=${EMPTY}
+    ${selector}    Catenate   SEPARATOR=    //div[contains(@class, "windowViewMode-normal")]//div[@force-recordlayoutitem_recordlayoutitem and contains(@class, "slds-form-element")][.//div[contains(@class, "slds-form-element__label")][.="${field name}"]]//slot[@name="outputField"]//*[@data-output-element-id="output-field"]
+    Wait Until Page Contains Element    ${selector}
+    Wait Until Element Is Enabled       ${selector}
+    Set Focus To Element                ${selector}
+    Scroll Element Into View            ${selector}
+    sleep    1
+    Capture Page Screenshot
+    ${actual value}    Get Text    ${selector}
+    Run Keyword If    '${expected value}'!='${EMPTY}'    Should Be Equal As Strings    ${expected value}    ${actual value}    msg=Expected '${field name}' is set to '${expected value}'. Actual value '${actual value}'

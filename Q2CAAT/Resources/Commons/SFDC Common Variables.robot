@@ -29,5 +29,5 @@ ${NEW_QUOTE_ID}              ${None}
 ${NEW_QUOTE_NAME}            ${None}
 ${10 mail boxes}             m1@d.com,m2@d.com,m3@d.com,m4@d.com,m5@d.com,m6@d.com,m7@d.com,m8@d.com,m9@d.com,m10@d.com
 ${IMAP HOST}                 imap.gmail.com
-${SANDBOX}                   DEVFULL
+${SANDBOX}                   TST    #DEVFULL
 

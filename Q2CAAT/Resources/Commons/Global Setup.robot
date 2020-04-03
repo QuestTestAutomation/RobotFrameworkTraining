@@ -15,7 +15,7 @@ ${BASE_URL}               https://questsoftware--devfull.cs44.my.salesforce.com
 ${LIGHTNING_BASE_URL}     https://questsoftware--devfull.lightning.force.com/lightning
 #${BASE_URL}              https://questsoftware--sfdctst.cs23.my.salesforce.com
 ${ENVIRONMENT}            Local    #Values: Remote for SauseLabs, Local for local webdriver
-${MAX_WAIT_TIME}          120
+${MAX_WAIT_TIME}          30
 ${VERIFICATION_CODE}      61000
 ${TEST_RUN_NAME}          Test Run - 12
 ${CI_ENABLED}             No

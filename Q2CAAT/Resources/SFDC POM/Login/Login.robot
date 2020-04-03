@@ -3,6 +3,7 @@ Resource    ../../Commons/Global Setup.robot
 Resource    Login Page Locators.robot
 Resource    ../../Commons/SFDC Common Variables.robot
 Resource    ../SFDC Navigation/Search and Open SFDC Objects.robot
+Resource    ../Lightning POM/POM Workarounds.robot
 Library     OperatingSystem    
 
 *** Keyword ***
@@ -15,7 +16,8 @@ Login as
     Wait Until Page Contains              ${user name}    
     Wait Until Page Contains Element      ${login from user details button}
     Click Element                         ${login from user details button}
-    Wait Until Element Contains           ${logged as message}    Logged in as ${user name} 
+    Wait Until Element Contains           ${logged as message}    Logged in as ${user name}
+    Reload Page 
     Go To                                 ${url to return}
 
 Lightning Login As
@@ -24,11 +26,23 @@ Lightning Login As
     ${user id}    Get User ID for         ${user name}
     ${user details url}   Set Variable    ${LIGHTNING_BASE_URL}/setup/ManageUsers/page?address=%2F${user id}%3Fnoredirect%3D1%26isUserEntityOverride%3D1
     Go To                                 ${user details url}
+    sleep    1
+    ${go home}                            Run Keyword And Ignore Error    Page Should Contain Element    //div[@id="auraError"]//a[.="Go Home"]
+    Run Keyword If                        '${go home[0]}' == 'PASS'    Click Element    //div[@id="auraError"]//a[.="Go Home"] 
+    ${already logged}                     Run Keyword And Ignore Error    Element Should Contain    //header[@id="oneHeader"]//div[@data-message-id="loginAsSystemMessage"]//span    ${user name}
+    Return From Keyword If                '${already logged[0]}' == 'PASS'         
     Wait Until Page Contains Element      //iframe[contains(@title, '${user name}')]   
     Select Frame                          //iframe[contains(@title, '${user name}')]
     Wait Until Page Contains              ${user name}
+    ${already logged}                     Run Keyword And Ignore Error    Element Should Contain    //header[@id="oneHeader"]//div[@data-message-id="loginAsSystemMessage"]//span    ${user name}
+    Return From Keyword If                '${already logged[0]}' == 'PASS'                                     
+    sleep    2
     Click Element                         ${login from user details button}
+    #sleep    2
     Unselect Frame
+    sleep    2s 
+    Reload Page
+    #Reload Page
     Wait Until Element Contains           //header[@id="oneHeader"]//div[@data-message-id="loginAsSystemMessage"]//span    ${user name}
     Go To                                 ${url to return}       
 
@@ -66,7 +80,7 @@ Login To SFDC sandbox
 	Input Text    ${user_name_textbox}    &{SF_USER}[email]
 	Input Password    ${password_textbox}    &{SF_USER}[password]
 	Click Element    ${login_button}
-	Verify Your Identity
+	#Verify Your Identity
 	Run Keyword If    '${experience}' == 'Classic'    Switch to Classic
 	Run Keyword If    '${experience}' == 'Classic'    Confirm user is logged in Classic Experience
 	Run Keyword If    '${experience}' == 'Lightning'  Switch to Lightning Experience
@@ -100,7 +114,7 @@ Open Test SFDC site using '${env}' environment
 Open Test SFDC Site On Local Environment
     [Documentation]    Open browser locally
     Open Browser    url=${BASE_URL}    browser=${BROWSER}    options=add_argument("--window-size=1920,1080")  #;add_argument("--start-maximized")
-    Set Window Size    1920    1080    
+    Set Window Size    1300    760    
     
 Open Test SFDC Site On Remote Environment
     [Documentation]    Open browser remotely. SauceLabs for now

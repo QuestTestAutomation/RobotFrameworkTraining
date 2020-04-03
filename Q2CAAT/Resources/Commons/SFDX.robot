@@ -174,3 +174,40 @@ Get Contact ID by Account Name and Contact Name
     ${q}    Catenate    "SELECT Id FROM Contact WHERE Account_Name__c = '${account name}' AND Name = '${contact name}' LIMIT 1"
     @{data set}    Execute data query    ${q}
     [Return]    @{data set}[0]
+
+Get Contact ID by Contact Name
+    [Arguments]    ${contact name}
+    ${q}    Catenate    "SELECT Id FROM Contact WHERE Name = '${contact name}' LIMIT 1"
+    @{data set}    Execute data query    ${q}
+    [Return]    @{data set}[0]
+
+Get Record Type ID By Name
+    [Arguments]    ${name}
+    @{data set}     Execute data query    "SELECT Id FROM RecordType WHERE Name = '${name}'"
+    [Return]    @{data set}[0]
+
+Create Data Record
+    [Arguments]    ${sobjecttype}    ${values}
+    ${command}    Catenate    ${sfdx root}    force:data:record:create    -s ${sobjecttype}    -v "${values}"
+    ${result}    Run    ${command}
+    Should Contain    ${result}    Successfully created record:
+    ${object id}   Get Regexp Matches    ${result}     Successfully created record: (.*).    1
+    [Return]    ${object id}
+    
+Update Data Record
+    [Arguments]    ${sobjecttype}    ${sobjectid}    ${values}
+    ${command}    Catenate    ${sfdx root}    force:data:record:update    -s ${sobjecttype}    -i ${sobjectid}    -v "${values}"
+    ${result}    Run    ${command}
+    Should Contain    ${result}    Successfully updated record:
+
+Get Product Group ID by Name
+    [Arguments]    ${product group}
+    ${q}    Catenate    "SELECT Id FROM Product_Group__c WHERE Name = '${product group}' LIMIT 1"
+    @{data set}    Execute data query    ${q}
+    [Return]    @{data set}[0]
+
+Get Product Interest ID by Name
+    [Arguments]    ${product interest}
+    ${q}    Catenate    "SELECT Id FROM Product_Interest__c WHERE Name = '${product interest}' LIMIT 1"
+    @{data set}    Execute data query    ${q}
+    [Return]    @{data set}[0]
